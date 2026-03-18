@@ -8,7 +8,7 @@
     // ---------------------------
     // Configuration
     // ---------------------------
-    var POSITIONS = [240, 408, 576]; // X positions for the 3 cups on screen (might ahve to change?)
+    var OG_POSITIONS = [240, 408, 576]; // X positions for the 3 cups on screen (might have to change?)
     var CUP_Y = 300;
     var MOVE_DURATION = 20; // frames per swap animation (lower = faster)
     var PIC_CUP = [1, 2, 3]; // Picture IDs for the three cups
@@ -44,7 +44,11 @@
                 var speed = parseInt(args[2]) || MOVE_DURATION; // sets speed equal to in in args[2] or MOVE_DURATION if it cannot parse an int
                 ShellGame.shuffle(times, speed);
             } else if (action === "pick") {
-                var cupIndex = parseInt(args[1]) - 1; // 1-based from events
+                var slotChoice = parseInt(args[1]) - 1; // -1 changing back to an index starting with 0
+
+                // Find which cup is currently in the chosen slot
+                var cupIndex = _positions.indexOf(slotChoice);
+
                 ShellGame.pick(cupIndex);
             } else if (action === "hide") {
                 ShellGame.hide();
@@ -61,7 +65,7 @@
     // Show cups and briefly reveal the ball
     ShellGame.start = function() {
         _ballCup = Math.floor(Math.random() * 3); // randoming choosing the cup that holds the ball
-        _positions = [0, 1, 2]; // do we need this line? It has the same definition above
+        _positions = [0, 1, 2]; // need this line to reset _positions at the start of each game, otherwise positions carry over
 
         // Show all cups in normal position
         for (var i = 0; i < 3; i++) {
@@ -69,7 +73,7 @@
                 PIC_CUP[i], // specify picture ID (from 1 to 100) to link to the image (4 in this case)
                 IMG_CUP_NORMAL, // name of image to be displayed
                 0, // origin point of the image
-                POSITIONS[i], // x coordinate of picture
+                OG_POSITIONS[i], // x coordinate of picture
                 CUP_Y + 60, // y coordinate of picture
                 100, // width scale %
                 100, // height scale %
@@ -83,7 +87,7 @@
             PIC_BALL,
             IMG_BALL,
             0,
-            POSITIONS[_ballCup], CUP_Y + 60,
+            OG_POSITIONS[_ballCup], CUP_Y + 60,
             100, 100,
             255, 0
         );
@@ -91,7 +95,7 @@
             PIC_CUP[_ballCup], 
             IMG_CUP_LIFTED,
             0, 
-            POSITIONS[_ballCup], CUP_Y,
+            OG_POSITIONS[_ballCup], CUP_Y,
             100, 100, 
             255, 0
         );
@@ -109,7 +113,7 @@
             PIC_CUP[_ballCup], 
             IMG_CUP_NORMAL,
             0, 
-            POSITIONS[_positions[_ballCup]], CUP_Y,
+            OG_POSITIONS[_positions[_ballCup]], CUP_Y,
             100, 100, 
             255, 0
         );
@@ -144,11 +148,11 @@
         _positions[a] = _positions[b];
         _positions[b] = tempPos;
 
-        // Animate the pictures to thie new positions
+        // Animate the pictures to the new positions
         $gameScreen.movePicture(
             PIC_CUP[a], // pictureId
             0, // origin
-            POSITIONS[_positions[a]], // x coordinate
+            OG_POSITIONS[_positions[a]], // x coordinate
             CUP_Y, // y coordinate
             100, // scaleX (width)
             100, // scaleY (height)
@@ -159,7 +163,7 @@
         $gameScreen.movePicture(
             PIC_CUP[b], 
             0,
-            POSITIONS[_positions[b]], CUP_Y,
+            OG_POSITIONS[_positions[b]], CUP_Y,
             100, 100, 
             255, 0, 
             duration
@@ -172,21 +176,23 @@
     };
 
     // Check the player's pick
-    ShellGame.pick = function(cupIndex) {
-        var won = (cupIndex === _ballCup);
+    // it's associated with the Pic ID and not the location of the cup on the screen
+    ShellGame.pick = function(cupChoice) { // input - 1
+        var won = (cupChoice === _ballCup);
 
         // Lift the chosen cup
-        $gameScreen.showPicture(
-            PIC_CUP[cupIndex], IMG_CUP_LIFTED,
-            0, POSITIONS[_positions[cupIndex]], CUP_Y,
-            100, 100, 255, 0
-        );
+
+            $gameScreen.showPicture(
+                PIC_CUP[cupChoice], IMG_CUP_LIFTED,
+                0, OG_POSITIONS[_positions[cupChoice]], CUP_Y,
+                100, 100, 255, 0
+            );
 
         if (won) {
             // Show ball under chosen cup
             $gameScreen.showPicture(
                 PIC_BALL, IMG_BALL,
-                0, POSITIONS[_positions[cupIndex]], CUP_Y + 60,
+                0, OG_POSITIONS[_positions[cupChoice]], CUP_Y + 60,
                 100, 100, 255, 0
             );
         }
