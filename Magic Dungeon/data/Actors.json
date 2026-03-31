@@ -1,4 +1,4 @@
 [
 null,
-{"id":1,"battlerName":"Linor_battle","characterIndex":0,"characterName":"$Linor","classId":3,"equips":[3,0,1,5,4],"faceIndex":0,"faceName":"","traits":[{"code":22,"dataId":4,"value":0.1}],"initialLevel":10,"maxLevel":99,"name":"Lenoir","nickname":"","note":"<level up event: 7>","profile":""}
+{"id":1,"battlerName":"Linor_battle","characterIndex":0,"characterName":"$Linor","classId":3,"equips":[3,0,2,3,4],"faceIndex":0,"faceName":"","traits":[{"code":22,"dataId":4,"value":0.1}],"initialLevel":1,"maxLevel":99,"name":"Lenoir","nickname":"","note":"<level up event: 7>","profile":""}
 ]
